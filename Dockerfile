@@ -1,9 +1,11 @@
-FROM alpine:latest
+FROM continuumio/miniconda3
 
-MAINTAINER mjsmagic
+ADD pure-exporter-stack.yml /tmp/pure-exporter-stack.yml
+RUN conda env create -f /tmp/pure-exporter-stack.yml
 
-RUN apk update && apk upgrade
+RUN echo "conda activate $(head -1 /tmp/pure-exporter-stack.yml | cut -d' ' -f2)" >> ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/pure-exporter-stack.yml | cut -d' ' -f2)/bin:$PATH
 
-ENTRYPOINT ["/bin/echo","<-------->","Hello Docker!"] 
+ENV CONDA_DEFAULT_ENV $(head -1 /tmp/pure-exporter-stack.yml | cut -d' ' -f2)
 
 
